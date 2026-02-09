@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 2: Farm Land Area - Irrigation Planning</title>
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="step-indicator">STEP 2 OF 5</div>
+            <h1>Enter Your Farm Land Area</h1>
+            <p>Specify the total area of your farm for irrigation planning</p>
+        </div>
+
+        <!-- Acres Input (Top) -->
+        <div class="input-group">
+            <label class="input-group-label" for="acresInput">Area in Acres</label>
+            <div class="input-container">
+                <input 
+                    type="number" 
+                    class="input-field" 
+                    id="acresInput" 
+                    placeholder="Enter area in acres..."
+                    step="0.01"
+                    min="0"
+                >
+                <span class="input-unit">Acres</span>
+            </div>
+            <div class="error-message" id="acresError">
+                Please enter a valid positive number
+            </div>
+        </div>
+
+        <!-- Sync Icon -->
+        <div class="sync-icon">⇅</div>
+
+        <!-- Square Feet Input (Bottom) -->
+        <div class="input-group">
+            <label class="input-group-label" for="sqftInput">Area in Square Feet</label>
+            <div class="input-container">
+                <input 
+                    type="number" 
+                    class="input-field" 
+                    id="sqftInput" 
+                    placeholder="Enter area in square feet..."
+                    step="1"
+                    min="0"
+                >
+                <span class="input-unit">sq ft</span>
+            </div>
+            <div class="error-message" id="sqftError">
+                Please enter a valid positive number
+            </div>
+        </div>
+
+        <!-- Information Box -->
+        <div class="info-box">
+            <p>
+                <span class="info-icon">i</span>
+                <strong>Conversion Formula:</strong> 1 Acre = 43,560 Square Feet
+            </p>
+        </div>
+    </div>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
