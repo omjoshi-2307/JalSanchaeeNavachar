@@ -1,10 +1,14 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyCowDfSEJJ2pCYrzIxKmhtkwVjJtXiAMkQ",
+  authDomain: "agriculture-9ea45.firebaseapp.com",
+  projectId: "agriculture-9ea45",
+  storageBucket: "agriculture-9ea45.firebasestorage.app",
+  messagingSenderId: "276579410211",
+  appId: "1:276579410211:web:69b4379b6d8f65575aec96"
 };
 
 const app = initializeApp(firebaseConfig);
