@@ -1,269 +1,205 @@
-document.addEventListener('DOMContentLoaded', () => {
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyCowDfSEJJ2pCYrzIxKmhtkwVjJtXiAMkQ",
+  authDomain: "agriculture-9ea45.firebaseapp.com",
+  projectId: "agriculture-9ea45",
+  storageBucket: "agriculture-9ea45.firebasestorage.app",
+  messagingSenderId: "276579410211",
+  appId: "1:276579410211:web:69b4379b6d8f65575aec96"
+};
+
+  const app = initializeApp(firebaseConfig);
+  window.auth = getAuth(app);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ===============================
+// MAIN JS WITH FIREBASE AUTH
+// ===============================
+
+document.addEventListener('DOMContentLoaded', () => {
     console.log("Main JS Loaded 🚀");
 
-    // ===============================
-    // INIT LOGIN PAGE
-    // ===============================
+    initPasswordToggles();
     initLogin();
-
-    // ===============================
-    // INIT SIGNUP PAGE
-    // ===============================
     initSignup();
-
-    // ===============================
-    // GLOBAL ENHANCEMENTS
-    // ===============================
     initGlobalFeatures();
 });
 
+// =====================================================
+// UNIVERSAL PASSWORD TOGGLE
+// =====================================================
+function initPasswordToggles() {
+    const toggles = document.querySelectorAll('.password-toggle');
+
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const targetId = toggle.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (!input) return;
+
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+
+            // Eye icon opacity
+            const svg = toggle.querySelector('.eye-icon');
+            if (svg) svg.style.opacity = isHidden ? "0.6" : "1";
+
+            // Ion-icon switch
+            const ionIcon = toggle.querySelector('ion-icon');
+            if (ionIcon) {
+                ionIcon.setAttribute('name', isHidden ? 'eye-outline' : 'eye-off-outline');
+            }
+        });
+    });
+}
+
+// =====================================================
+// FIREBASE AUTH MODULES (Shared)
+// =====================================================
+let authModule = null;
+async function getAuthModule() {
+    if (!authModule) {
+        const mod = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        authModule = mod;
+    }
+    return authModule;
+}
 
 // =====================================================
 // LOGIN FUNCTIONALITY
 // =====================================================
-function initLogin() {
-
+async function initLogin() {
     const loginForm = document.getElementById('loginForm');
-    if (!loginForm) return; // Only run on login page
+    if (!loginForm) return;
 
-    const togglePasswordBtn = document.querySelector('.toggle-password');
-    const passwordInput = document.getElementById('password');
-    const eyeIcon = document.getElementById('eye-icon');
     const loginBtn = document.querySelector('.login-btn');
-    const btnText = loginBtn?.querySelector('span');
     const googleBtn = document.querySelector('.google-btn');
-    const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
 
-    // Password toggle
-    if (togglePasswordBtn && passwordInput && eyeIcon) {
-        togglePasswordBtn.addEventListener('click', () => {
-            const hidden = passwordInput.type === 'password';
-            passwordInput.type = hidden ? 'text' : 'password';
-            eyeIcon.setAttribute('name', hidden ? 'eye-off-outline' : 'eye-outline');
-        });
-    }
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    // Form submission
-    if (loginBtn && btnText) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+        const email = document.getElementById('email')?.value.trim();
+        const password = document.getElementById('password')?.value;
 
-            const email = document.getElementById('email')?.value;
-            const password = passwordInput?.value;
+        if (!email || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
+        if (!loginBtn) return;
+        const btnText = loginBtn.querySelector('span');
 
-            const originalText = btnText.textContent;
-            btnText.textContent = 'Signing In...';
+        try {
             loginBtn.disabled = true;
-            loginBtn.style.opacity = '0.7';
+            if (btnText) btnText.textContent = 'Signing In...';
+            else loginBtn.textContent = 'Signing In...';
 
-            setTimeout(() => {
-                alert('Login successful! (Demo)');
-                btnText.textContent = originalText;
-                loginBtn.disabled = false;
-                loginBtn.style.opacity = '1';
-            }, 1500);
-        });
-    }
+            const { signInWithEmailAndPassword } = await getAuthModule();
+            await signInWithEmailAndPassword(window.auth, email, password);
 
-    // Google sign in
-    if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-            alert('Redirecting to Google Sign-In... (Demo)');
-        });
-    }
+            alert("Login Successful 🎉");
+            window.location.href = "dashboard.html";
 
-    // Input focus effects
-    inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            const group = input.closest('.input-group');
-            if (group) group.classList.add('focused');
-        });
-
-        input.addEventListener('blur', () => {
-            const group = input.closest('.input-group');
-            if (group) group.classList.remove('focused');
-        });
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            if (btnText) btnText.textContent = 'Sign In';
+            else loginBtn.textContent = 'Sign In';
+            loginBtn.disabled = false;
+        }
     });
+
+    if (googleBtn) {
+        googleBtn.addEventListener('click', async () => {
+            try {
+                const { GoogleAuthProvider, signInWithPopup } = await getAuthModule();
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(window.auth, provider);
+
+                alert("Google Login Successful 🎉");
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    }
 }
-
-
 
 // =====================================================
 // SIGNUP FUNCTIONALITY
 // =====================================================
-function initSignup() {
-
+async function initSignup() {
     const signupForm = document.getElementById('signupForm');
-    if (!signupForm) return; // Only run on signup page
+    if (!signupForm) return;
 
-    let currentStep = 1;
-
-    const nextToStep2Btn = document.getElementById('nextToStep2');
-    const backToStep1Btn = document.getElementById('backToStep1');
-
-    if (nextToStep2Btn) {
-        nextToStep2Btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (validateStep1()) goToStep(2);
-        });
-    }
-
-    if (backToStep1Btn) {
-        backToStep1Btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            goToStep(1);
-        });
-    }
-
-    function goToStep(step) {
-        document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-        const target = document.getElementById(`step${step}`);
-        if (target) target.classList.add('active');
-
-        document.querySelectorAll('.progress-step').forEach(p => {
-            const stepNum = parseInt(p.getAttribute('data-step'));
-            p.classList.toggle('active', stepNum === step);
-        });
-
-        currentStep = step;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ==========================
-    // VALIDATION HELPERS
-    // ==========================
-    const showError = (id, message) => {
-        const field = document.getElementById(id);
-        const errorEl = document.getElementById(id + 'Error');
-        if (field) field.classList.add('error');
-        if (errorEl) {
-            errorEl.textContent = message;
-            errorEl.classList.add('visible');
-        }
-    };
-
-    const clearError = (id) => {
-        const field = document.getElementById(id);
-        const errorEl = document.getElementById(id + 'Error');
-        if (field) field.classList.remove('error');
-        if (errorEl) {
-            errorEl.textContent = '';
-            errorEl.classList.remove('visible');
-        }
-    };
-
-    const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const validatePhone = phone => phone.replace(/\D/g, '').length >= 10;
-    const validatePassword = pwd => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd);
-
-    function validateStep1() {
-        let valid = true;
-
-        const fullName = document.getElementById('fullName')?.value.trim();
-        const email = document.getElementById('email')?.value.trim();
-        const phone = document.getElementById('phone')?.value.trim();
-        const password = document.getElementById('password')?.value;
-        const confirm = document.getElementById('confirmPassword')?.value;
-
-        ['fullName','email','phone','password','confirmPassword'].forEach(clearError);
-
-        if (!fullName || fullName.length < 2) { showError('fullName','Enter valid name'); valid=false; }
-        if (!email || !validateEmail(email)) { showError('email','Enter valid email'); valid=false; }
-        if (!phone || !validatePhone(phone)) { showError('phone','Enter valid phone'); valid=false; }
-        if (!password || !validatePassword(password)) { showError('password','Weak password'); valid=false; }
-        if (!confirm || confirm !== password) { showError('confirmPassword','Passwords do not match'); valid=false; }
-
-        return valid;
-    }
-
-    function validateStep2() {
-        let valid = true;
-        const requiredFields = ['villageName','plotName','plotSize','soilType','cropType','irrigationMethod','waterAvailability','fertilizerUsage'];
-
-        requiredFields.forEach(id => {
-            clearError(id);
-            const value = document.getElementById(id)?.value.trim();
-            if (!value) {
-                showError(id,'This field is required');
-                valid = false;
-            }
-        });
-
-        return valid;
-    }
-
-    // Form submit
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!validateStep2()) return;
+
+        const email = document.getElementById('email')?.value.trim();
+        const password = document.getElementById('password')?.value;
+
+        if (!email || !password) {
+            alert("Fill all required fields");
+            return;
+        }
 
         setSubmitButtonLoading(true);
 
-        setTimeout(() => {
+        try {
+            const { createUserWithEmailAndPassword } = await getAuthModule();
+            await createUserWithEmailAndPassword(window.auth, email, password);
+
+            alert("Account Created Successfully 🎉");
+            window.location.href = "login.html";
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
             setSubmitButtonLoading(false);
-            showSuccessModal();
-        }, 1500);
+        }
     });
-
-    // Success modal
-    function showSuccessModal() {
-        const modal = document.getElementById('successModal');
-        if (modal) modal.classList.add('active');
-    }
 }
-
-
 
 // =====================================================
 // GLOBAL FEATURES
 // =====================================================
 function initGlobalFeatures() {
-
-    // Spinner animation style
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }
-        .animate-spin { animation: spin 1s linear infinite; }
-    `;
-    document.head.appendChild(style);
-
-    // Footer year auto update
     const footerTextEl = document.querySelector('.footer-text');
     if (footerTextEl) {
         footerTextEl.textContent =
             footerTextEl.textContent.replace(/\b\d{4}\b/, new Date().getFullYear());
     }
-
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) target.scrollIntoView({ behavior: 'smooth' });
-        });
-    });
 }
 
-
-
 // =====================================================
-// SUBMIT BUTTON LOADING STATE
+// SUBMIT BUTTON LOADING
 // =====================================================
 function setSubmitButtonLoading(isLoading) {
     const btn = document.getElementById('submitBtn');
     if (!btn) return;
 
-    if (isLoading) {
-        btn.disabled = true;
-        btn.innerHTML = 'Creating Account...';
-    } else {
-        btn.disabled = false;
-        btn.innerHTML = 'Create Account';
-    }
+    btn.disabled = isLoading;
+    btn.innerHTML = isLoading ? 'Creating Account...' : 'Create Account';
 }
