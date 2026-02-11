@@ -1,50 +1,27 @@
+import { auth } from '../src/firebase/firebase.js';
+import { loginWithGoogle } from '../src/firebase/authGoogle.js';
+import { onAuthStateChanged, sendEmailVerification, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, updateDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 // ===============================
 // MAIN JS WITH UNIVERSAL FEATURES & FIREBASE
 // ===============================
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Main JS Loaded 🚀");
-    initFirebase(); // Initialize Firebase
     initPasswordToggles(); // Setup password toggles
     initFooterYear(); // Update footer year dynamically
     initLoginForm(); // Setup login form
     initSignupForm(); // Setup signup form
     checkAuthState(); // Check authentication state
+    setupAuthStateListener(); // Listen to auth changes
 });
 
 // =====================================================
 // 🔹 FIREBASE INITIALIZATION
 // =====================================================
-let db = null; // Firestore reference
-let auth = null; // Auth reference
-
-function initFirebase() {
-    const firebaseConfig = {
-        apiKey: "AIzaSyCowDfSEJJ2pCYrzIxKmhtkwVjJtXiAMkQ",
-        authDomain: "agriculture-9ea45.firebaseapp.com",
-        projectId: "agriculture-9ea45",
-        storageBucket: "agriculture-9ea45.firebasestorage.app",
-        messagingSenderId: "276579410211",
-        appId: "1:276579410211:web:69b4379b6d8f65575aec96"
-    };
-
-    import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js").then(({ initializeApp }) => {
-        const app = initializeApp(firebaseConfig);
-        console.log("Firebase Initialized ✅");
-
-        // Initialize Firestore
-        import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js").then(({ getFirestore }) => {
-            db = getFirestore(app);
-            window.db = db; // make globally available
-        });
-
-        // Initialize Auth
-        import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js").then(({ getAuth }) => {
-            auth = getAuth(app);
-            window.auth = auth; // make globally available
-            setupAuthStateListener(); // Listen to auth changes
-        });
-    });
-}
+const db = getFirestore(auth.app);
+window.db = db; // make globally available
+window.auth = auth; // make globally available
 
 // =====================================================
 // 🔹 AUTHENTICATION STATE MANAGEMENT
@@ -71,60 +48,58 @@ function checkAuthState() {
 function setupAuthStateListener() {
     if (!auth) return;
 
-    import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js").then(({ onAuthStateChanged }) => {
-        onAuthStateChanged(auth, async (user) => {
-            // Prevent concurrent auth checks
-            if (authCheckInProgress) return;
-            authCheckInProgress = true;
+    onAuthStateChanged(auth, async (user) => {
+        // Prevent concurrent auth checks
+        if (authCheckInProgress) return;
+        authCheckInProgress = true;
 
-            const currentPage = getCurrentPage();
+        const currentPage = getCurrentPage();
+        
+        if (user) {
+            // User is signed in
+            console.log("User logged in:", user.email);
+            console.log("Email verified:", user.emailVerified);
             
-            if (user) {
-                // User is signed in
-                console.log("User logged in:", user.email);
-                console.log("Email verified:", user.emailVerified);
-                
-                // Store user info globally
-                window.currentUser = {
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: user.displayName,
-                    photoURL: user.photoURL,
-                    emailVerified: user.emailVerified
-                };
+            // Store user info globally
+            window.currentUser = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                emailVerified: user.emailVerified
+            };
 
-                // Check email verification for protected pages
-                if (protectedPages.includes(currentPage)) {
-                    if (!user.emailVerified) {
-                        showVerificationMessage();
-                        authCheckInProgress = false;
-                        return;
-                    }
-                    
-                    // Update last login time in Firestore
-                    updateUserLoginTime(user.uid);
-                }
-
-                // Update UI for logged-in users
-                updateUIForLoggedInUser(user);
-                
-            } else {
-                // User is signed out
-                console.log("No user logged in");
-                window.currentUser = null;
-
-                // If on protected pages, redirect to login
-                if (protectedPages.includes(currentPage)) {
-                    window.location.href = 'login.html';
+            // Check email verification for protected pages
+            if (protectedPages.includes(currentPage)) {
+                if (!user.emailVerified) {
+                    showVerificationMessage();
+                    authCheckInProgress = false;
                     return;
                 }
-
-                // Update UI for logged-out users
-                updateUIForLoggedOutUser();
+                
+                // Update last login time in Firestore
+                updateUserLoginTime(user.uid);
             }
 
-            authCheckInProgress = false;
-        });
+            // Update UI for logged-in users
+            updateUIForLoggedInUser(user);
+            
+        } else {
+            // User is signed out
+            console.log("No user logged in");
+            window.currentUser = null;
+
+            // If on protected pages, redirect to login
+            if (protectedPages.includes(currentPage)) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update UI for logged-out users
+            updateUIForLoggedOutUser();
+        }
+
+        authCheckInProgress = false;
     });
 }
 
@@ -133,7 +108,6 @@ async function updateUserLoginTime(uid) {
     if (!window.db) return;
     
     try {
-        const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
         await updateDoc(doc(window.db, 'users', uid), {
             emailVerified: true,
             lastLogin: new Date()
@@ -215,7 +189,6 @@ async function resendVerificationEmail() {
         btn.disabled = true;
         btn.textContent = 'Sending...';
         
-        const { sendEmailVerification } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
         await sendEmailVerification(auth.currentUser);
         
         alert('Verification email sent! Please check your inbox and spam folder.');
@@ -247,8 +220,8 @@ async function checkEmailVerification() {
         await auth.currentUser.reload();
         
         if (auth.currentUser.emailVerified) {
-            alert('Email verified successfully! Reloading page...');
-            window.location.reload();
+            alert('Email verified successfully! Redirecting to dashboard...');
+            window.location.href = 'dashboard.html';
         } else {
             alert('Email not verified yet. Please check your inbox and click the verification link.');
         }
@@ -303,7 +276,6 @@ function initLogout() {
 
 async function handleLogout() {
     try {
-        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
         await signOut(auth);
         alert('Logged out successfully!');
         window.location.href = 'login.html';
@@ -378,8 +350,6 @@ async function handleLogin(event) {
         loginBtn.disabled = true;
         loginBtn.textContent = 'Signing In...';
 
-        const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
-        const auth = getAuth();
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
         // Check if email is verified
@@ -389,13 +359,11 @@ async function handleLogin(event) {
             // Show option to resend verification email
             const resend = confirm('Do you want to resend the verification email?');
             if (resend) {
-                const { sendEmailVerification } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
                 await sendEmailVerification(userCredential.user);
                 alert('Verification email sent! Please check your inbox.');
             }
             
             // Sign out the user
-            const { signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
             await signOut(auth);
             
             loginBtn.disabled = false;
@@ -404,8 +372,27 @@ async function handleLogin(event) {
         }
         
         // Email is verified, proceed to dashboard
-        alert('Login successful!');
-        window.location.href = 'dashboard.html';
+        console.log('Login successful, redirecting to dashboard...');
+        
+        // Update last login in Firestore
+        if (window.db) {
+            try {
+                await updateDoc(doc(window.db, 'users', userCredential.user.uid), {
+                    lastLogin: new Date(),
+                    emailVerified: true
+                });
+            } catch (error) {
+                console.log('Error updating login time:', error);
+            }
+        }
+        
+        // Show success message and redirect
+        alert('Login successful! Redirecting to dashboard...');
+        
+        // Small delay to ensure alert is visible
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 500);
         
     } catch (error) {
         console.error(error);
@@ -428,6 +415,9 @@ async function handleLogin(event) {
             case 'auth/invalid-credential':
                 errorMessage += 'Invalid email or password.';
                 break;
+            case 'auth/too-many-requests':
+                errorMessage += 'Too many failed login attempts. Please try again later.';
+                break;
             default:
                 errorMessage += error.message;
         }
@@ -441,17 +431,12 @@ async function handleLogin(event) {
 // Google Login
 async function handleGoogleLogin() {
     try {
-        const { getAuth, GoogleAuthProvider, signInWithPopup } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
-        const auth = getAuth();
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
+        const result = await loginWithGoogle();
         
-        // Google accounts are auto-verified
-        alert(`Welcome ${result.user.displayName || result.user.email}!`);
+        console.log('Google login successful');
         
         // Save to Firestore if new user
         if (window.db) {
-            const { doc, setDoc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
             const userDoc = await getDoc(doc(window.db, 'users', result.user.uid));
             
             if (!userDoc.exists()) {
@@ -462,14 +447,37 @@ async function handleGoogleLogin() {
                     createdAt: new Date(),
                     loginMethod: 'google'
                 });
+            } else {
+                // Update last login
+                await updateDoc(doc(window.db, 'users', result.user.uid), {
+                    lastLogin: new Date()
+                });
             }
         }
         
-        window.location.href = 'dashboard.html';
+        // Google accounts are auto-verified, redirect to dashboard
+        alert(`Welcome ${result.user.displayName || result.user.email}! Redirecting to dashboard...`);
+        
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 500);
         
     } catch (error) {
         console.error(error);
-        alert('Google login failed: ' + error.message);
+        
+        let errorMessage = 'Google login failed: ';
+        switch (error.code) {
+            case 'auth/popup-closed-by-user':
+                errorMessage += 'Login cancelled.';
+                break;
+            case 'auth/popup-blocked':
+                errorMessage += 'Popup blocked. Please allow popups for this site.';
+                break;
+            default:
+                errorMessage += error.message;
+        }
+        
+        alert(errorMessage);
     }
 }
 
@@ -481,6 +489,9 @@ function initSignupForm() {
     if (!signupForm) return;
 
     signupForm.addEventListener('submit', handleSignup);
+
+    const googleBtn = document.getElementById('googleLoginBtn');
+    if (googleBtn) googleBtn.addEventListener('click', handleGoogleLogin);
 }
 
 async function handleSignup(event) {
@@ -512,19 +523,20 @@ async function handleSignup(event) {
         signupBtn.disabled = true;
         signupBtn.textContent = 'Creating Account...';
 
-        const { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
-        const auth = getAuth();
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        console.log('Account created, sending verification email...');
         
         // Update profile with display name
         await updateProfile(userCredential.user, { displayName: fullName });
 
         // Send verification email
         await sendEmailVerification(userCredential.user);
+        
+        console.log('Verification email sent');
 
         // Save additional info in Firestore
         if (window.db) {
-            const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
             await setDoc(doc(window.db, 'users', userCredential.user.uid), {
                 fullName,
                 email,
@@ -536,26 +548,29 @@ async function handleSignup(event) {
         }
 
         // Show success message
-        alert('Account created successfully! \n\nA verification email has been sent to ' + email + '. \n\nPlease verify your email before logging in.');
+        alert('Account created successfully! \n\nA verification email has been sent to ' + email + '. \n\nPlease check your inbox and verify your email before logging in.');
         
         // Sign out the user so they must verify before logging in
-        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
         await signOut(auth);
         
-        // Redirect to login
-        window.location.href = 'login.html';
+        console.log('User signed out, redirecting to login...');
+        
+        // Redirect to login page
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1000);
         
     } catch (error) {
-        console.error(error);
+        console.error('Signup error:', error);
         let errorMessage = 'Signup failed: ';
         
         // Provide user-friendly error messages
         switch (error.code) {
             case 'auth/email-already-in-use':
-                errorMessage += 'An account with this email already exists.';
+                errorMessage += 'An account with this email already exists. Please login instead.';
                 break;
             case 'auth/invalid-email':
-                errorMessage += 'Invalid email address.';
+                errorMessage += 'Invalid email address format.';
                 break;
             case 'auth/weak-password':
                 errorMessage += 'Password is too weak. Use at least 6 characters.';
