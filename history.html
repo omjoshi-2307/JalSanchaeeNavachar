@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JalSanchaeeNavvichar - History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="history.css">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+    <!-- Background decorative elements -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Logo</div>
+
+        <div class="nav-links">
+            <a href="dashboard.html">Home</a>
+            <a href="#">About Us</a>
+            <a href="#">Language</a>
+            <a href="#">Services</a>
+            <a href="#" class="contact-btn">Contact</a>
+        </div>
+
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </nav>
+
+    <!-- Overlay Menu -->
+    <div class="overlay-menu" id="overlayMenu">
+        <span class="close-btn" onclick="toggleMenu()">&times;</span>
+        <div class="menu-items">
+            <a href="dashboard.html">Home</a>
+            <a href="#">New Releases</a>
+            <a href="#">Alerts</a>
+            <a href="#" class="active">History</a>
+            <a href="#">My Credits</a>
+            <a href="#">Government Schemes</a>
+            <a href="#">Profile Editing</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container history-container">
+        <h1 class="page-title">Farming History & Analytics</h1>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon-bg">
+                    <ion-icon name="water-outline"></ion-icon>
+                </div>
+                <div class="stat-info">
+                    <h3>Avg. Water Availability</h3>
+                    <p class="value">450 <small>mm/acre</small></p>
+                    <div class="trend positive">
+                        <ion-icon name="arrow-up-outline"></ion-icon> 12% vs last year
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon-bg">
+                    <ion-icon name="leaf-outline"></ion-icon>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Water Saved</h3>
+                    <p class="value">12,500 <small>Liters</small></p>
+                    <div class="trend positive">
+                        <ion-icon name="arrow-up-outline"></ion-icon> 8% vs last season
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon-bg">
+                    <ion-icon name="cash-outline"></ion-icon>
+                </div>
+                <div class="stat-info">
+                    <h3>Cost Efficiency</h3>
+                    <p class="value">₹15,000 <small>Saved</small></p>
+                    <div class="trend positive">Through Drip/Sprinkler</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon-bg" style="background: #fff1f2; color: #be123c;">
+                    <ion-icon name="shield-checkmark-outline"></ion-icon>
+                </div>
+                <div class="stat-info">
+                    <h3>Buffer Stock Utilized</h3>
+                    <p class="value">5,000 <small>Liters</small></p>
+                    <div class="trend positive" style="color: #be123c;">
+                        <ion-icon name="warning-outline"></ion-icon> During May '24 Heatwave
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Split: History List & Comparison -->
+        <div class="history-layout">
+
+            <!-- Left: Comparison Table -->
+            <section class="comparison-section card">
+                <div class="section-header">
+                    <h2>Performance Comparison</h2>
+                    <select class="compare-select">
+                        <option>Current vs Last Season</option>
+                        <option>Wheat 2024 vs Wheat 2023</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Old Plan (2023)</th>
+                                <th>New Plan (2024)</th>
+                                <th>Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="metric-name">
+                                        <ion-icon name="water"></ion-icon> Water Consumption
+                                    </div>
+                                </td>
+                                <td>4,500 L/acre</td>
+                                <td>3,200 L/acre</td>
+                                <td class="status-good">-28% (Saved)</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="metric-name">
+                                        <ion-icon name="wallet"></ion-icon> Cost of Irrigation
+                                    </div>
+                                </td>
+                                <td>₹12,000</td>
+                                <td>₹8,500</td>
+                                <td class="status-good">Save ₹3,500</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="metric-name">
+                                        <ion-icon name="timer"></ion-icon> Pump Usage
+                                    </div>
+                                </td>
+                                <td>150 Hours</td>
+                                <td>110 Hours</td>
+                                <td class="status-good">-40 Hours</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Right: History List -->
+            <section class="history-list-section">
+                <div class="section-header">
+                    <h2>Previous Plans</h2>
+                    <div class="filter-controls">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Kharif</button>
+                        <button class="filter-btn">Rabi</button>
+                    </div>
+                </div>
+
+                <div class="history-items">
+                    <!-- Item 1 -->
+                    <div class="history-card-item">
+                        <div class="card-left">
+                            <div class="crop-icon">🌾</div>
+                            <div>
+                                <h3>Wheat (Rabi)</h3>
+                                <span class="date">12 Jan 2024</span>
+                            </div>
+                        </div>
+                        <div class="card-right">
+                            <span class="tag tag-success">Completed</span>
+                            <button class="btn-open-plan">Open Plan</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="history-card-item">
+                        <div class="card-left">
+                            <div class="crop-icon">🌽</div>
+                            <div>
+                                <h3>Maize (Kharif)</h3>
+                                <span class="date">15 June 2023</span>
+                            </div>
+                        </div>
+                        <div class="card-right">
+                            <span class="tag tag-neutral">Archived</span>
+                            <button class="btn-open-plan">Open Plan</button>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="history-card-item">
+                        <div class="card-left">
+                            <div class="crop-icon">🍅</div>
+                            <div>
+                                <h3>Tomato (Zaid)</h3>
+                                <span class="date">10 March 2023</span>
+                            </div>
+                        </div>
+                        <div class="card-right">
+                            <span class="tag tag-neutral">Archived</span>
+                            <button class="btn-open-plan">Open Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('overlayMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Simple filter logic for demo
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelector('.filter-btn.active').classList.remove('active');
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
