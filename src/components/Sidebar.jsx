@@ -40,22 +40,25 @@ const Sidebar = ({ isOpen, onToggle }) => {
         />
       )}
 
-      <aside style={{
-        position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: '280px',
-        background: 'var(--white)',
-        borderRight: '1px solid rgba(0,119,182,0.1)',
-        zIndex: 50,
-        padding: '30px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-        transition: 'transform 0.3s ease',
-        boxShadow: '4px 0 24px rgba(0, 119, 182, 0.05)'
-      }}>
+      <aside 
+        className="glass-panel-deep"
+        style={{
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: '280px',
+          borderRight: '1px solid var(--glass-border)',
+          zIndex: 50,
+          padding: '30px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'var(--transition)',
+          boxShadow: '4px 0 32px rgba(0, 0, 0, 0.1)',
+          borderRadius: '0 24px 24px 0'
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px', padding: '0 10px' }}>
           <div style={{ 
             width: '40px', 
@@ -89,8 +92,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
                 borderRadius: '12px',
                 color: isActive ? 'var(--white)' : 'var(--text-muted)',
                 background: isActive ? 'var(--primary)' : 'transparent',
-                fontWeight: isActive ? '600' : '500',
-                transition: 'all 0.2s ease',
+                fontWeight: isActive ? '700' : '500',
+                transition: 'var(--transition)',
+                boxShadow: isActive ? '0 4px 12px rgba(24, 78, 108, 0.2)' : 'none'
               })}
             >
               <item.icon size={20} />

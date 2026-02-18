@@ -40,18 +40,13 @@ const Login = () => {
   return (
     <div className="auth-container">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="glass-card" 
-        style={{
-          width: '100%',
-          maxWidth: '450px',
-          padding: '40px',
-        }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="auth-card" 
       >
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '2rem', marginBottom: '8px', fontWeight: '700' }}>Welcome Back</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Securely access your irrigation dashboard</p>
+          <h1 style={{ fontSize: '1.75rem', marginBottom: '6px', fontWeight: '800', color: 'var(--text-main)' }}>Welcome Back</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Securely access your irrigation dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -65,7 +60,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="john@example.com"
-                className="auth-input"
+                className="auth-input glass-input"
               />
             </div>
           </div>
@@ -80,13 +75,25 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="auth-input"
-                style={{ paddingLeft: '40px', paddingRight: '40px' }}
+                className="auth-input glass-input"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="password-toggle"
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  zIndex: 5
+                }}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>

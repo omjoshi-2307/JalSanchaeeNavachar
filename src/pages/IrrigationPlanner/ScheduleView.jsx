@@ -21,6 +21,20 @@ const ScheduleView = ({ scheduleData, onReset }) => {
               Optimized Irrigation Schedule
             </h2>
             <p style={{ color: 'var(--text-muted)' }}>Tailored for {summary.cropName} on your farm</p>
+            {summary.weatherNotice && (
+              <div style={{ 
+                marginTop: '12px', 
+                padding: '8px 16px', 
+                background: '#fef3c7', 
+                color: '#92400e', 
+                borderRadius: '8px', 
+                fontSize: '0.85rem', 
+                fontWeight: '600',
+                display: 'inline-block'
+              }}>
+                {summary.weatherNotice}
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button 

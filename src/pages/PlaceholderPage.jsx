@@ -7,13 +7,13 @@ const PlaceholderPage = ({ title, icon: Icon, description }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-light)' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'transparent' }}>
       <Sidebar isOpen={isSidebarOpen} onToggle={() => setSidebarOpen(!isSidebarOpen)} />
 
       <main style={{
         flex: 1,
         marginLeft: isSidebarOpen ? '280px' : '0',
-        transition: 'margin-left 0.3s ease',
+        transition: 'var(--transition)',
         minHeight: '100vh'
       }}>
         <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
@@ -31,16 +31,25 @@ const PlaceholderPage = ({ title, icon: Icon, description }) => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="glass-card"
-            style={{ padding: '60px', maxWidth: '600px' }}
+            style={{ 
+              padding: '60px', 
+              maxWidth: '600px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: '1px solid var(--glass-border)'
+            }}
           >
             <div style={{
               color: 'var(--primary)',
               marginBottom: '24px',
               display: 'inline-flex',
-              padding: '20px',
-              background: 'white',
+              padding: '24px',
+              background: 'rgba(255, 255, 255, 0.4)',
               borderRadius: '24px',
-              boxShadow: '0 8px 30px rgba(0, 119, 182, 0.1)'
+              boxShadow: '0 8px 32px rgba(0, 119, 182, 0.15)',
+              border: '1px solid var(--glass-border)',
+              backdropFilter: 'blur(8px)'
             }}>
               <Icon size={64} />
             </div>
@@ -49,12 +58,14 @@ const PlaceholderPage = ({ title, icon: Icon, description }) => {
               {description}
             </p>
             <div style={{
-              padding: '12px 24px',
-              background: 'rgba(0, 119, 182, 0.05)',
-              borderRadius: '12px',
-              fontSize: '0.9rem',
-              fontWeight: '600',
-              color: 'var(--primary)'
+              padding: '14px 28px',
+              background: 'var(--primary)',
+              borderRadius: '16px',
+              fontSize: '1rem',
+              fontWeight: '800',
+              color: 'white',
+              boxShadow: '0 4px 14px rgba(24, 78, 108, 0.3)',
+              display: 'inline-block'
             }}>
               Coming Soon in the Next Update
             </div>

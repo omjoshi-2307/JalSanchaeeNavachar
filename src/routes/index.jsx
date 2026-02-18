@@ -4,13 +4,16 @@ import Login from '../pages/Auth/Login';
 import Signup from '../pages/Auth/Signup';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Planner from '../pages/IrrigationPlanner/Planner';
+import Profile from '../pages/Profile/Profile';
 import PlaceholderPage from '../pages/PlaceholderPage';
 import {
   History,
   Settings,
   HelpCircle,
   Zap,
-  Sprout
+  Sprout,
+  Bell,
+  User
 } from 'lucide-react';
 
 export const routes = [
@@ -89,6 +92,26 @@ export const routes = [
           icon={Sprout}
           description="Deep insights into crop health through satellite imagery and soil sensors."
         />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/notifications',
+    element: (
+      <ProtectedRoute>
+        <PlaceholderPage
+          title="Notifications"
+          icon={Bell}
+          description="View all your alerts and updates in one place."
+        />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/profile',
+    element: (
+      <ProtectedRoute>
+        <Profile />
       </ProtectedRoute>
     )
   },

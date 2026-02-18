@@ -1,11 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { routes } from './routes';
-import FloatingChat from './components/FloatingChat';
-import { Toaster } from 'react-hot-toast';
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { routes } from "./routes";
+import FloatingChat from "./components/FloatingChat";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  console.log('[JalSanchaee] App component rendering...');
+  const location = useLocation();
+  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+
+  console.log("[JalSanchaee] App component rendering...");
 
   return (
     <AuthProvider>
@@ -13,10 +16,12 @@ function App() {
       <Routes>
         {routes.map((route) => {
           console.log(`[JalSanchaee] Configuring Route: ${route.path}`);
-          return <Route key={route.path} path={route.path} element={route.element} />;
+          return (
+            <Route key={route.path} path={route.path} element={route.element} />
+          );
         })}
       </Routes>
-      <FloatingChat />
+      {!isAuthPage && <FloatingChat />}
     </AuthProvider>
   );
 }

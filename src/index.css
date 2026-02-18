@@ -1,16 +1,25 @@
 :root {
-  --primary: #0077b6;
-  --primary-hover: #005f92;
-  --primary-light: #00b4d8;
-  --accent: #90e0ef;
-  --bg-light: #f0faff;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --text-main: #023e8a;
-  --text-muted: #0077b6;
+  /* New Glassmorphism Color Palette */
+  --primary: #184E6C;
+  --secondary: #387EA2;
+  --accent: #5BA3C6;
+  --light-accent: #9BCBE5;
+  --bg-main: #DDECF6;
+  
+  --primary-hover: #123B52;
+  --primary-light: #5BA3C6;
+  
+  --text-main: #0B2C41;
+  --text-muted: #387EA2;
   --white: #ffffff;
-  --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-  --glass: rgba(255, 255, 255, 0.45);
-  --font-main: 'Outfit', sans-serif;
+  
+  --glass-bg: rgba(255, 255, 255, 0.2);
+  --glass-bg-deep: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  --font-main: "Outfit", sans-serif;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -21,25 +30,48 @@
 
 body {
   font-family: var(--font-main);
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  background: linear-gradient(135deg, var(--bg-main) 0%, var(--light-accent) 100%);
+  background-attachment: fixed;
   min-height: 100vh;
   color: var(--text-main);
   overflow-x: hidden;
 }
 
+.glass-panel {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-2xl);
+}
+
+.glass-panel-deep {
+  background: var(--glass-bg-deep);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-2xl);
+}
+
 .glass-card {
-  background: var(--glass);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.glass-card:hover {
+  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 button {
   cursor: pointer;
   font-family: var(--font-main);
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 a {
@@ -47,35 +79,29 @@ a {
   color: inherit;
 }
 
-/* Auth Specific Overrides */
-.auth-input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 119, 182, 0.2);
-  background: rgba(255, 255, 255, 0.7);
-  outline: none;
-  transition: all 0.3s ease;
-}
+/* Auth Specific Overrides - Handled in Auth.css */
 
-.auth-input:focus {
-  border-color: var(--primary);
-  background: white;
-}
-
-/* Utility Classes (Missing from Tailwind) */
+/* Utility Classes */
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-center { justify-content: center; }
 .min-h-screen { min-height: 100vh; }
-.min-h-100 { min-height: 100%; }
 .w-full { width: 100%; }
-.h-12 { height: 3rem; }
-.w-12 { width: 3rem; }
+.rounded-xl { border-radius: 1rem; }
+.rounded-2xl { border-radius: 1.5rem; }
 .rounded-full { border-radius: 9999px; }
-.border-b-2 { border-bottom-width: 2px; }
-.border-primary { border-color: var(--primary); }
+
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.p-8 { padding: 2rem; }
 
 .animate-spin {
   animation: spin 1s linear infinite;
@@ -84,4 +110,19 @@ a {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Glassmorphism Input Styling */
+.glass-input {
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  transition: var(--transition);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px rgba(24, 78, 108, 0.1) !important;
 }

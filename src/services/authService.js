@@ -20,13 +20,14 @@ export const authService = {
       throw new Error('Please verify your email before logging in.');
     }
     // Update last login
-    await updateDoc(doc(db, 'users', userCredential.user.uid), {
+    const userRef = doc(db, 'users', userCredential.user.uid);
+    await updateDoc(userRef, {
       lastLogin: new Date(),
     });
     return userCredential.user;
   },
 
-  register: async (email, password, fullName, phone) => {
+  register: async (email, password, fullName, phone, village = '', farmSize = '', irrigationType = '') => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName: fullName });
     await sendEmailVerification(userCredential.user);
@@ -36,6 +37,9 @@ export const authService = {
       fullName,
       email,
       phone,
+      village,
+      farmSize,
+      irrigationType,
       createdAt: new Date(),
       lastLogin: new Date(),
       role: 'user'
@@ -49,22 +53,44 @@ export const authService = {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userRef);
+    
     if (!userDoc.exists()) {
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(userRef, {
         fullName: user.displayName,
         email: user.email,
+        village: '',
+        farmSize: '',
+        irrigationType: '',
         createdAt: new Date(),
         lastLogin: new Date(),
         role: 'user',
         loginMethod: 'google'
       });
     } else {
-      await updateDoc(doc(db, 'users', user.uid), {
+      await updateDoc(userRef, {
         lastLogin: new Date()
       });
     }
     return user;
+  },
+
+  updateUserProfile: async (uid, data) => {
+    const userRef = doc(db, 'users', uid);
+    await updateDoc(userRef, {
+      ...data,
+      updatedAt: new Date()
+    });
+  },
+
+  getUserProfile: async (uid) => {
+    const userRef = doc(db, 'users', uid);
+    const userDoc = await getDoc(userRef);
+    if (userDoc.exists()) {
+      return userDoc.data();
+    }
+    return null;
   },
 
   logout: async () => {

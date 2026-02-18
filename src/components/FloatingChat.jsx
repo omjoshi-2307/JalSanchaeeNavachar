@@ -52,102 +52,123 @@ const FloatingChat = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="glass-card"
             style={{ 
-              width: '380px', 
-              height: '500px', 
+              width: '400px', 
+              height: '600px', 
               marginBottom: '20px', 
               display: 'flex', 
               flexDirection: 'column',
               overflow: 'hidden',
-              boxShadow: '0 12px 40px rgba(0, 119, 182, 0.2)'
+              background: 'rgba(255, 255, 255, 0.4)',
+              backdropFilter: 'blur(32px)',
+              WebkitBackdropFilter: 'blur(32px)',
+              border: '1px solid var(--glass-border)',
+              boxShadow: 'var(--shadow-2xl)',
+              borderRadius: '24px'
             }}
           >
             {/* Header */}
             <div style={{ 
-              padding: '20px', 
+              padding: '24px 20px', 
               background: 'var(--primary)', 
               color: 'white', 
               display: 'flex', 
               justifyContent: 'space-between', 
-              alignItems: 'center' 
+              alignItems: 'center',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ background: 'rgba(255,255,255,0.2)', padding: '8px', borderRadius: '10px' }}>
-                  <Bot size={20} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.25)', padding: '10px', borderRadius: '12px' }}>
+                  <Bot size={22} />
                 </div>
                 <div>
-                  <div style={{ fontWeight: '700', fontSize: '1rem' }}>JalSanchaee AI</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Online • Ready to help</div>
+                  <div style={{ fontWeight: '800', fontSize: '1.1rem', letterSpacing: '0.3px' }}>JalSanchaee AI</div>
+                  <div style={{ fontSize: '0.8rem', opacity: 0.9, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ width: '6px', height: '6px', background: '#10b981', borderRadius: '50%' }}></span>
+                    Online • Assistant
+                  </div>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: 'white' }}>
+              <button 
+                onClick={() => setIsOpen(false)} 
+                style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', padding: '6px', borderRadius: '8px', cursor: 'pointer' }}
+                whileHover={{ background: 'rgba(255,255,255,0.25)' }}
+              >
                 <X size={20} />
               </button>
             </div>
 
             {/* Messages */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px', background: 'rgba(255,255,255,0.4)' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: '20px', background: 'transparent' }}>
               {messages.map((msg) => (
                 <div key={msg.id} style={{ 
                   alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '80%',
+                  maxWidth: '85%',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '4px'
+                  gap: '6px'
                 }}>
                   <div style={{ 
-                    padding: '12px 16px', 
-                    borderRadius: msg.sender === 'user' ? '18px 18px 0 18px' : '18px 18px 18px 0',
-                    background: msg.sender === 'user' ? 'var(--primary)' : 'white',
+                    padding: '14px 18px', 
+                    borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                    background: msg.sender === 'user' ? 'var(--primary)' : 'rgba(255, 255, 255, 0.4)',
+                    backdropFilter: msg.sender === 'user' ? 'none' : 'blur(8px)',
+                    WebkitBackdropFilter: msg.sender === 'user' ? 'none' : 'blur(8px)',
                     color: msg.sender === 'user' ? 'white' : 'var(--text-main)',
-                    fontSize: '0.9rem',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                    lineHeight: '1.5'
+                    fontSize: '0.95rem',
+                    boxShadow: msg.sender === 'user' ? '0 4px 12px rgba(24, 78, 108, 0.2)' : '0 4px 12px rgba(0,0,0,0.03)',
+                    lineHeight: '1.6',
+                    border: msg.sender === 'user' ? 'none' : '1px solid var(--glass-border)',
+                    fontWeight: msg.sender === 'user' ? '500' : '500'
                   }}>
                     {msg.text}
                   </div>
                 </div>
               ))}
               {isTyping && (
-                <div style={{ alignSelf: 'flex-start', background: 'white', padding: '8px 16px', borderRadius: '18px 18px 18px 0', display: 'flex', gap: '4px' }}>
-                  <Loader2 size={16} className="animate-spin" color="var(--primary)" />
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AI is thinking...</span>
+                <div style={{ alignSelf: 'flex-start', background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(8px)', padding: '12px 20px', borderRadius: '20px 20px 20px 4px', display: 'flex', gap: '8px', alignItems: 'center', border: '1px solid var(--glass-border)' }}>
+                  <Loader2 size={18} className="animate-spin" color="var(--primary)" />
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>AI is thinking...</span>
                 </div>
               )}
               <div ref={chatEndRef} />
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSend} style={{ padding: '15px', background: 'white', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', gap: '10px' }}>
+            <form onSubmit={handleSend} style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.2)', backdropFilter: 'blur(10px)', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '12px' }}>
               <input 
                 type="text" 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask anything..."
+                placeholder="Ask me anything..."
+                className="glass-input"
                 style={{ 
                   flex: 1, 
-                  border: '1px solid rgba(0,119,182,0.1)', 
-                  borderRadius: '20px', 
-                  padding: '10px 15px',
+                  borderRadius: '24px', 
+                  padding: '12px 20px',
                   outline: 'none',
-                  fontSize: '0.9rem'
+                  fontSize: '0.95rem'
                 }}
               />
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05, boxShadow: '0 4px 15px rgba(24, 78, 108, 0.3)' }}
+                whileTap={{ scale: 0.95 }}
                 type="submit"
                 style={{ 
                   background: 'var(--primary)', 
                   color: 'white', 
                   border: 'none', 
-                  borderRadius: '50%', 
-                  width: '40px', 
-                  height: '40px',
+                  borderRadius: '16px', 
+                  width: '48px', 
+                  height: '48px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'var(--transition)'
                 }}
               >
-                <Send size={18} />
-              </button>
+                <Send size={20} />
+              </motion.button>
             </form>
           </motion.div>
         )}
