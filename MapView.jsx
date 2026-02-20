@@ -3,12 +3,15 @@ import { useState } from "react";
 import { MapContainer, TileLayer, FeatureGroup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+
+
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 
 export default function MapView() {
     const [plots, setPlots] = useState([]);
+
 
     // This function runs every time a polygon is drawn
     const handleCreated = async (e) => {
@@ -19,13 +22,25 @@ export default function MapView() {
         setPlots((prev) => [...prev, geojson]);
 
         try {
-            await addDoc(collection(db, "forms"), {
-                polygon: JSON.stringify(geojson),
-                createdAt: new Date()
+            console.log("Attempting to update specific document Hg3Fk1cRg5WDwTcc5DiZ...");
+
+            // Reference the specific document
+            const specificDocRef = doc(db, "farms", "Hg3Fk1cRg5WDwTcc5DiZ");
+
+            // Update the document by adding the new polygon to a 'polygons' array field
+            // If the field doesn't exist, it will be created.
+            await updateDoc(specificDocRef, {
+                polygons: arrayUnion({
+                    id: Date.now(),
+                    // Firestore cannot store nested arrays (like GeoJSON coordinates [[x,y]]), so we stringify it
+                    geometry: JSON.stringify(geojson.geometry),
+                    properties: geojson.properties,
+                    createdAt: new Date().toISOString()
+                })
             });
-            console.log("Farm saved to Firebase successfully"); // confirms save
+            console.log("Polygon added to document Hg3Fk1cRg5WDwTcc5DiZ successfully");
         } catch (error) {
-            console.error("Error saving to Firebase:", error);
+            console.error("Error updating document:", error);
         }
     };
 
