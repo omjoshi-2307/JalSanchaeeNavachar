@@ -23,7 +23,12 @@ export function calculateIrrigation(data, now = new Date()) {
     throw new IrrigationInputError('Form data must be an object.');
   }
 
-  const area = Number(data.area);
+  const areaValue = data.area;
+  if ((typeof areaValue !== 'number' && typeof areaValue !== 'string') ||
+      (typeof areaValue === 'string' && !areaValue.trim())) {
+    throw new IrrigationInputError('Farm area must be a positive number.');
+  }
+  const area = Number(areaValue);
   if (!Number.isFinite(area) || area <= 0) {
     throw new IrrigationInputError('Farm area must be a positive number.');
   }

@@ -49,6 +49,8 @@ test('rejects invalid farm areas, units, seasons, and soils', () => {
     { area: 0, unit: 'acres' },
     { area: -1, unit: 'acres' },
     { area: 'not-a-number', unit: 'acres' },
+    { area: true, unit: 'acres' },
+    { area: {}, unit: 'acres' },
     { area: 1, unit: 'bigha' },
     { area: 1, unit: 'acres', season: 'monsoon' },
     { area: 1, unit: 'acres', soilType: 'rock' },
