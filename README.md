@@ -1,6 +1,6 @@
 # JalSanchaeeNavachar
 
-A React and Vite irrigation-planning application with an Express API, Firebase/Firestore integration, and Open-Meteo weather data.
+A React and Vite irrigation-planning application with a Node.js API, Firebase/Firestore integration, and Open-Meteo weather data.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ Start the frontend in one terminal:
 npm run dev
 ```
 
-Start the Express API in a second terminal:
+Start the API in a second terminal:
 
 ```bash
 npm run server
@@ -39,6 +39,7 @@ Useful backend endpoints:
 ## Quality checks
 
 ```bash
+npm test
 npm run lint
 npm run build
 ```
