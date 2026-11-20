@@ -5,7 +5,7 @@ export class IrrigationInputError extends Error {
   }
 }
 
-const normalizeToken = (value) => String(value).trim().toLowerCase().replace(/[\\s_-]+/g, '');
+const normalizeToken = (value) => String(value).trim().toLowerCase().replace(/[\s_-]+/g, '');
 
 const AREA_TO_ACRES = {
   acre: 1,
