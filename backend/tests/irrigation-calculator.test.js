@@ -59,3 +59,18 @@ test('rejects invalid farm areas, units, seasons, and soils', () => {
     assert.throws(() => calculateIrrigation(input, fixedDate), IrrigationInputError, JSON.stringify(input));
   }
 });
+
+test('keeps schedule dates aligned with the local calendar near the UTC day boundary', () => {
+  const previousTimezone = process.env.TZ;
+  process.env.TZ = 'Asia/Kolkata';
+  try {
+    const boundaryDate = new Date('2026-11-20T18:45:00.000Z'); // 00:15 IST on 21 Nov
+    const result = calculateIrrigation({ area: 1, unit: 'acres', cropName: 'Corn', season: 'Rabi', soilType: 'Silt' }, boundaryDate);
+    assert.deepEqual(result.schedule.map(item => item.date), [
+      '2026-11-21', '2026-11-28', '2026-12-05', '2026-12-12',
+    ]);
+  } finally {
+    if (previousTimezone === undefined) delete process.env.TZ;
+    else process.env.TZ = previousTimezone;
+  }
+});

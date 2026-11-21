@@ -4,9 +4,7 @@ export class IrrigationInputError extends Error {
     this.name = 'IrrigationInputError';
   }
 }
-
 const normalizeToken = (value) => String(value).trim().toLowerCase().replace(/[\s_-]+/g, '');
-
 const AREA_TO_ACRES = {
   acre: 1,
   acres: 1,
@@ -16,6 +14,12 @@ const AREA_TO_ACRES = {
   sqft: 1 / 43560,
   squarefoot: 1 / 43560,
   squarefeet: 1 / 43560,
+};
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export function calculateIrrigation(data, now = new Date()) {
@@ -65,7 +69,7 @@ export function calculateIrrigation(data, now = new Date()) {
     date.setDate(date.getDate() + index * 7);
     return {
       week: index + 1,
-      date: date.toISOString().split('T')[0],
+      date: formatLocalDate(date),
       waterQuantityLiters: Math.round(totalWater / 4),
       frequency,
       instructions: `Water in the early ${index % 2 === 0 ? 'morning' : 'evening'} for best results.`,
