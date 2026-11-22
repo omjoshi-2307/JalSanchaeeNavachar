@@ -99,6 +99,7 @@ test('returns 404 for unknown routes', async () => {
   });
 });
 
+
 test('returns 400 for malformed request-target URLs without crashing the server', async () => {
   await withServer(async () => 'unused', async baseUrl => {
     const { port } = new URL(baseUrl);
@@ -109,9 +110,9 @@ test('returns 400 for malformed request-target URLs without crashing the server'
       socket.on('data', chunk => { data += chunk; });
       socket.once('error', reject);
       socket.once('end', () => resolve(data));
-      socket.write('GET http://[::1/api/health HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n');
+      socket.write('GET http://[::1/api/health HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n');
     });
-    assert.match(responseText, /HTTP\\/1\\.1 400/);
+    assert.match(responseText, /HTTP\/1\.1 400/);
     assert.match(responseText, /Invalid request URL/);
   });
 });
