@@ -52,7 +52,13 @@ export function createApiServer({ saveSchedule }) {
       return;
     }
 
-    const pathname = new URL(request.url ?? '/', 'http://localhost').pathname;
+    let pathname;
+    try {
+      pathname = new URL(request.url ?? '/', 'http://localhost').pathname;
+    } catch {
+      sendJson(response, 400, { error: 'Invalid request URL.' });
+      return;
+    }
     if (request.method === 'GET' && pathname === '/api/health') {
       sendJson(response, 200, {
         status: 'ok',

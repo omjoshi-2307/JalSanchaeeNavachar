@@ -74,3 +74,17 @@ test('keeps schedule dates aligned with the local calendar near the UTC day boun
     else process.env.TZ = previousTimezone;
   }
 });
+
+test('rejects inherited unit and season keys', () => {
+  for (const unit of ['constructor', 'toString', 'valueOf']) {
+    assert.throws(() => calculateIrrigation({ area: 1, unit }, fixedDate), IrrigationInputError, unit);
+  }
+  for (const season of ['constructor', 'toString', 'valueOf']) {
+    assert.throws(() => calculateIrrigation({ area: 1, unit: 'acres', season }, fixedDate), IrrigationInputError, season);
+  }
+});
+
+test('rejects area conversions and water totals that overflow finite numbers', () => {
+  assert.throws(() => calculateIrrigation({ area: 1e308, unit: 'hectares' }, fixedDate), IrrigationInputError);
+  assert.throws(() => calculateIrrigation({ area: 1e308, unit: 'acres' }, fixedDate), IrrigationInputError);
+});

@@ -1,4 +1,5 @@
 import test from 'node:test';
+import net from 'node:net';
 import assert from 'node:assert/strict';
 import { createApiServer } from '../http-server.js';
 
@@ -95,5 +96,22 @@ test('returns 404 for unknown routes', async () => {
   await withServer(async () => 'unused', async baseUrl => {
     const response = await fetch(`${baseUrl}/unknown`);
     assert.equal(response.status, 404);
+  });
+});
+
+test('returns 400 for malformed request-target URLs without crashing the server', async () => {
+  await withServer(async () => 'unused', async baseUrl => {
+    const { port } = new URL(baseUrl);
+    const responseText = await new Promise((resolve, reject) => {
+      const socket = net.connect(Number(port), '127.0.0.1');
+      let data = '';
+      socket.setEncoding('utf8');
+      socket.on('data', chunk => { data += chunk; });
+      socket.once('error', reject);
+      socket.once('end', () => resolve(data));
+      socket.write('GET http://[::1/api/health HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n');
+    });
+    assert.match(responseText, /HTTP\\/1\\.1 400/);
+    assert.match(responseText, /Invalid request URL/);
   });
 });

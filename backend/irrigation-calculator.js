@@ -38,18 +38,21 @@ export function calculateIrrigation(data, now = new Date()) {
   }
 
   const unit = normalizeToken(data.unit ?? 'acres');
-  const conversion = AREA_TO_ACRES[unit];
+  const conversion = Object.hasOwn(AREA_TO_ACRES, unit) ? AREA_TO_ACRES[unit] : undefined;
   if (conversion === undefined) {
     throw new IrrigationInputError('Unsupported farm-area unit. Use acres, hectares, or square feet.');
   }
   const areaInAcres = area * conversion;
+  if (!Number.isFinite(areaInAcres)) {
+    throw new IrrigationInputError('Farm area is outside the supported range.');
+  }
 
   const cropName = String(data.cropName ?? 'default').trim() || 'default';
   const season = normalizeToken(data.season ?? 'rabi');
   const soilType = normalizeToken(data.soilType ?? 'loamy');
 
   const seasonalMultipliers = { kharif: 0.8, rabi: 1.1, zaid: 1.5 };
-  if (seasonalMultipliers[season] === undefined) {
+  if (!Object.hasOwn(seasonalMultipliers, season)) {
     throw new IrrigationInputError('Unsupported season. Use Kharif, Rabi, or Zaid.');
   }
   if (!['sandy', 'clay', 'loamy', 'silt'].includes(soilType)) {
@@ -62,6 +65,9 @@ export function calculateIrrigation(data, now = new Date()) {
   const seasonalMultiplier = seasonalMultipliers[season];
   const soilAdjustment = soilType === 'sandy' ? 1.4 : soilType === 'clay' ? 0.7 : 1.0;
   const totalWater = areaInAcres * baseWaterPerAcre * cropFactor * seasonalMultiplier * soilAdjustment;
+  if (!Number.isFinite(totalWater)) {
+    throw new IrrigationInputError('Calculated water requirement is outside the supported range.');
+  }
   const frequency = soilType === 'sandy' ? 'Daily' : 'Twice a week';
 
   const schedule = Array.from({ length: 4 }, (_, index) => {
