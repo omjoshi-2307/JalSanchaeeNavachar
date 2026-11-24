@@ -141,3 +141,25 @@ test('accepts JSON media type parameters but rejects types that only share its p
     assert.equal(saveCalls, 1);
   });
 });
+
+test('rejects request bodies above the 100 KiB limit before persistence', async () => {
+  let saveCalls = 0;
+  await withServer(async () => { saveCalls += 1; return 'unused'; }, async baseUrl => {
+    const body = JSON.stringify({
+      userId: 'user-1',
+      formData: { area: 1, unit: 'acres' },
+      padding: 'x'.repeat(100 * 1024),
+    });
+    assert.ok(Buffer.byteLength(body) > 100 * 1024);
+
+    const response = await fetch(`${baseUrl}/api/generate-schedule`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+    });
+
+    assert.equal(response.status, 413);
+    assert.deepEqual(await response.json(), { error: 'Request body is too large.' });
+    assert.equal(saveCalls, 0);
+  });
+});
