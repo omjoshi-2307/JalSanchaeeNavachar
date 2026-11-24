@@ -116,3 +116,28 @@ test('returns 400 for malformed request-target URLs without crashing the server'
     assert.match(responseText, /Invalid request URL/);
   });
 });
+
+test('accepts JSON media type parameters but rejects types that only share its prefix', async () => {
+  let saveCalls = 0;
+  await withServer(async () => { saveCalls += 1; return 'schedule-123'; }, async baseUrl => {
+    const body = JSON.stringify({ userId: 'user-1', formData: { area: 1, unit: 'acres' } });
+    const valid = await fetch(`${baseUrl}/api/generate-schedule`, {
+      method: 'POST',
+      headers: { 'content-type': 'Application/JSON; charset=utf-8' },
+      body,
+    });
+    assert.equal(valid.status, 200);
+
+    for (const contentType of ['application/jsonp', 'application/json-invalid', 'text/application/json']) {
+      const response = await fetch(`${baseUrl}/api/generate-schedule`, {
+        method: 'POST',
+        headers: { 'content-type': contentType },
+        body,
+      });
+      assert.equal(response.status, 400, contentType);
+      assert.deepEqual(await response.json(), { error: 'Expected application/json request body.' });
+    }
+
+    assert.equal(saveCalls, 1);
+  });
+});
