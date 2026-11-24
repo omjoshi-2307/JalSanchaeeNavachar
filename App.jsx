@@ -16,7 +16,7 @@ export default function MapView() {
     setPlots(prev => [...prev, geojson]);
 
     try {
-      await addDoc(collection(db, "forms"), {
+      await addDoc(collection(db, "farms"), {
         polygon: JSON.stringify(geojson),
         createdAt: new Date()
       });
