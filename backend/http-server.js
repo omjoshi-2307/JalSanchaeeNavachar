@@ -72,7 +72,9 @@ export function createApiServer({ saveSchedule }) {
       return;
     }
 
-    if (!String(request.headers['content-type'] ?? '').toLowerCase().startsWith('application/json')) {
+    const contentType = String(request.headers['content-type'] ?? '');
+    const mediaType = contentType.split(';', 1)[0].trim().toLowerCase();
+    if (mediaType !== 'application/json') {
       sendJson(response, 400, { error: 'Expected application/json request body.' });
       return;
     }
