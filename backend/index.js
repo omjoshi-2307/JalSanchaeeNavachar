@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { createApiServer } from './http-server.js';
+import { readServerPort } from './serverConfig.js';
 
 // Firebase client configuration used by the existing frontend project.
 const firebaseConfig = {
@@ -12,8 +13,10 @@ const firebaseConfig = {
   appId: '1:276579410211:web:69b4379b6d8f65575aec96',
 };
 
+
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
+
 
 const saveSchedule = async (userId, formData, schedule) => {
   const scheduleCollectionRef = collection(db, 'users', userId, 'irrigationSchedules');
@@ -25,7 +28,8 @@ const saveSchedule = async (userId, formData, schedule) => {
   return documentRef.id;
 };
 
-const port = Number(process.env.PORT) || 5000;
+
+const port = readServerPort();
 const server = createApiServer({ saveSchedule });
 server.listen(port, () => {
   console.log(`Irrigation API server running on http://localhost:${port}`);
