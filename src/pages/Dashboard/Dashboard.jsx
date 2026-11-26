@@ -195,7 +195,7 @@ const Dashboard = () => {
           values: weather.daily.precipitation_sum,
           labels: days
         };
-      case 'humidity':
+      case 'humidity': {
         // Compute daily average humidity from hourly data (24 entries per day)
         const humidityForecast = [];
         for (let i = 0; i < 7; i++) {
@@ -210,6 +210,7 @@ const Dashboard = () => {
           values: humidityForecast,
           labels: days
         };
+      }
       default: return null;
     }
   };

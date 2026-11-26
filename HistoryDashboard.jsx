@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import Clock from 'lucide-react';
 import {
     Droplets, Leaf, CircleDollarSign, ShieldCheck,
-    TrendingUp, AlertTriangle, Clock, Wallet, Droplets, Menu, X
+    TrendingUp, AlertTriangle, Clock, Wallet, Menu, X
 } from 'lucide-react';
 // Import the raw CSS file provided by the user
 import '../history.css';
