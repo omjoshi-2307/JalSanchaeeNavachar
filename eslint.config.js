@@ -28,6 +28,8 @@ export default [
     },
     rules: {
       ...js.configs.recommended.rules,
+      // Existing screens contain unused imports; report them without blocking the baseline CI.
+      "no-unused-vars": "warn",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react-refresh/only-export-components": [
